@@ -1,28 +1,16 @@
-// index.js
 import express from 'express';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
 import postRoutes from './src/routes/post.routes.js';
 import { testConnection } from './src/config/db.js';
 
-
-
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
 app.use(express.json());
 
-// Mount the post routes
+// Mount routes
 app.use('/posts', postRoutes);
-app.use('/comments', commentRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
+  testConnection();
 });
-
-//test
