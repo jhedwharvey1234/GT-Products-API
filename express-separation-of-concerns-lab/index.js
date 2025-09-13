@@ -3,7 +3,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import postRoutes from './src/routes/post.routes.js';
-import commentRoutes from './src/routes/comment.routes.js';
+import { testConnection } from './src/config/db.js';
+
 
 
 dotenv.config();
