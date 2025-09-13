@@ -1,55 +1,89 @@
-import * as commentService from '../services/comment.service.js';
+import {
+    getAllcomments,
+    getcommentById,
+    createcomment,
+    updatecomment,
+    partiallyUpdatecomment,
+    deletecomment,
+     getCommentsByPostId as getCommentsByPostIdService
+} from '../services/comment.service.js'; // Adjust the path based on your structure
 
-export const getAllcomments = (req, res) => {
-    const comments = commentService.getAllcomments();
-    res.json(comments);
+// Get all comments
+export const getAllCommentsController = async (req, res) => {
+    try {
+        const comments = await getAllcomments();
+        res.status(200).json(comments);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch comments', error });
+    }
 };
 
-export const getcommentById = (req, res) => {
-    const commentId = parseInt (req.params.id, 10);
-    const comment = commentService.getcommentById(commentId);
-    if (!comment) {
-        return res.status(404).json({ message: 'comment not found.' });
+// Get a comment by ID
+export const getCommentByIdController = async (req, res) => {
+    try {
+        const { commentsId } = req.params;
+        const comment = await getcommentById(commentsId);
+        if (!comment) return res.status(404).json({ message: 'Comment not found' });
+        res.status(200).json(comment);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch comment', error });
     }
-    res.json(comment);
 };
 
-export const createcomment = (req, res) => {
-    const { text, postId } = req.body;
-    if (!text || !postId) {
-        return res.status(400).json({ message: 'Text and postId are required.' });
-    }  
-    const newcomment = commentService.createcomment({ text, postId });
-    res.status(201).json(newcomment);
-};
-export const updatecomment = (req, res) => {
-    const commentId = parseInt(req.params.id, 10);
-    const { text, postId } = req.body;
-    const updatedcomment = commentService.updatecomment(commentId, { text, postId });
-    if (!updatedcomment) {
-        return res.status(404).json({ message: 'comment not found.' });
+// Create a new comment
+export const createCommentController = async (req, res) => {
+    try {
+        const commentData = req.body;
+        const newComment = await createcomment(commentData);
+        res.status(201).json(newComment);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create comment', error });
     }
-    res.json(updatedcomment);
 };
-export const deletecomment = (req, res) => {
-    const commentId = parseInt(req.params.id, 10);
-    const success = commentService.deletecomment(commentId);
-    if (!success) {
-        return res.status(404).json({ message: 'comment not found.' });
+
+// Update a comment fully
+export const updateCommentController = async (req, res) => {
+    try {
+        const { commentsId } = req.params;
+        const commentData = req.body;
+        const updatedComment = await updatecomment(commentsId, commentData);
+        if (!updatedComment) return res.status(404).json({ message: 'Comment not found' });
+        res.status(200).json(updatedComment);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update comment', error });
     }
-    res.status(204).send();
 };
-export const commentPatch = (req, res) => {
-    const commentId = parseInt(req.params.id, 10);
-    const { text, postId } = req.body;
-    const patchedcomment = commentService.patchcomment(commentId, { text, postId });
-    if (!patchedcomment) {
-        return res.status(404).json({ message: 'comment not found.' });
+
+// Partially update a comment
+export const partiallyUpdateCommentController = async (req, res) => {
+    try {
+        const { commentsId } = req.params;
+        const updates = req.body;
+        const updatedComment = await partiallyUpdatecomment(commentsId, updates);
+        if (!updatedComment) return res.status(404).json({ message: 'Comment not found' });
+        res.status(200).json(updatedComment);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to partially update comment', error });
     }
-    res.json(patchedcomment);
 };
-export const getCommentsByPostId = (req, res) => {
-    const postId = parseInt(req.params.postId, 10);
-    const comments = commentService.getCommentsByPostId(postId);
-    res.json(comments);
+
+// Delete a comment
+export const deleteCommentController = async (req, res) => {
+    try {
+        const { commentsId } = req.params;
+        const deleted = await deletecomment(commentsId);
+        if (!deleted) return res.status(404).json({ message: 'Comment not found' });
+        res.status(200).json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to delete comment', error });
+    }
+};
+export const getCommentsByPostId = async (req, res) => {
+    try {
+        const { postId } = req.params;
+        const comments = await getCommentsByPostIdService(postId);
+        res.status(200).json(comments);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch comments for the post', error });
+    }
 };
