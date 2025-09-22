@@ -1,4 +1,5 @@
 import express from 'express';
+import userRoutes from "./src/routes/user.routes.js";
 import postRoutes from './src/routes/post.routes.js';
 import commentRoutes from './src/routes/comment.routes.js';
 import { testConnection } from './src/config/db.js';
@@ -10,6 +11,7 @@ const port = 3000;
 app.use(express.json());
 
 // Mount routes
+app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/comments', commentRoutes);
 app.use(errorHandler);

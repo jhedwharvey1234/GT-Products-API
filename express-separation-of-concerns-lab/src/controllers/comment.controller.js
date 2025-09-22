@@ -6,9 +6,8 @@ import {
     partiallyUpdatecomment,
     deletecomment,
      getCommentsByPostId as getCommentsByPostIdService
-} from '../services/comment.service.js'; // Adjust the path based on your structure
+} from '../services/comment.service.js'; 
 
-// Get all comments
 export const getAllCommentsController = async (req, res) => {
     try {
         const comments = await getAllcomments();
@@ -18,7 +17,6 @@ export const getAllCommentsController = async (req, res) => {
     }
 };
 
-// Get a comment by ID
 export const getCommentByIdController = async (req, res) => {
     try {
         const { commentsId } = req.params;
@@ -30,7 +28,7 @@ export const getCommentByIdController = async (req, res) => {
     }
 };
 
-// Create a new comment
+
 export const createCommentController = async (req, res) => {
     try {
         const commentData = req.body;
@@ -41,7 +39,7 @@ export const createCommentController = async (req, res) => {
     }
 };
 
-// Update a comment fully
+
 export const updateCommentController = async (req, res) => {
     try {
         const { commentsId } = req.params;
@@ -54,7 +52,7 @@ export const updateCommentController = async (req, res) => {
     }
 };
 
-// Partially update a comment
+
 export const partiallyUpdateCommentController = async (req, res) => {
     try {
         const { commentsId } = req.params;
@@ -67,7 +65,7 @@ export const partiallyUpdateCommentController = async (req, res) => {
     }
 };
 
-// Delete a comment
+
 export const deleteCommentController = async (req, res) => {
     try {
         const { commentsId } = req.params;

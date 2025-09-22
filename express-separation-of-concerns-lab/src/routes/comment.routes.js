@@ -1,4 +1,4 @@
-// routes/comment.routes.js
+
 
 import { Router } from 'express';
 import {
@@ -9,12 +9,13 @@ import {
     partiallyUpdateCommentController,
     deleteCommentController
 } from '../controllers/comment.controller.js';
+import { validateComment } from '../middlewares/validator.middleware.js';
 
 const router = Router();
 
-// Route definitions
+
 router.get('/', getAllCommentsController);
-router.post('/', createCommentController);
+router.post('/', validateComment, createCommentController);
 router.get('/:commentsId', getCommentByIdController);
 router.put('/:commentsId', updateCommentController);
 router.patch('/:commentsId', partiallyUpdateCommentController); // Optional: PATCH support

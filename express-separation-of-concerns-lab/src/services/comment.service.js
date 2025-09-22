@@ -1,3 +1,4 @@
+export { getCommentsByUserId } from "./user.comments.service.js";
 import pool from '../config/db.js';
 
 export const getAllcomments = async () => {
@@ -9,24 +10,29 @@ export const getcommentById = async (commentsId) => {
     return rows[0] || null;
 };
 export const createcomment = async (commentData) => {
-    const {title, content, id} = commentData;
-    const [result] = await pool.query(
-        'INSERT INTO comments (title, content, id) VALUES (?, ?, ?)',
-        [title, content, id]
-    );
-    const newcommentId = result.insertId;
-    return getcommentById(newcommentId);
+    const { title, content, id, authorId } = commentData;
+    try {
+        const [result] = await pool.query(
+            'INSERT INTO comments (title, content, id, authorId) VALUES (?, ?, ?, ?)',
+            [title, content, id, authorId]
+        );
+        const newcommentId = result.insertId;
+        return getcommentById(newcommentId);
+    } catch (err) {
+        if (err.code === "ER_NO_REFERENCED_ROW_2") {
+            throw new Error("Invalid author ID. User does not exist.");
+        }
+        throw err;
+    }
 };
 export const updatecomment = async (commentsId, commentData) => {
-    const { title, content, id } = commentData;
+    const { title, content, id, authorId } = commentData;
     const [result] = await pool.query(
-        'UPDATE comments SET title = ?, content = ?, id = ? WHERE commentsId = ?',
-        [title, content, id, commentsId]
+        'UPDATE comments SET title = ?, content = ?, id = ?, authorId = ? WHERE commentsId = ?',
+        [title, content, id, authorId, commentsId]
     );
     if (result.affectedRows === 0) return null;
     return getcommentById(commentsId);
-    if (result.affectedRows === 0) return null;
-    return getcommentById(commentsId);  
 };
 
 export const partiallyUpdatecomment = async (commentsId, updates) => {
