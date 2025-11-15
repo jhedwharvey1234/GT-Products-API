@@ -17,6 +17,30 @@ export const validateComment = [
 // src/middlewares/validator.middleware.js
 import { body, validationResult } from "express-validator";
 
+export const validateRegistration = [
+    body('username')
+        .trim()
+        .notEmpty()
+        .withMessage('Username is required.'),
+    
+    body('email')
+        .isEmail()
+        .withMessage('A valid email is required.'),
+
+    body('password')
+        .isLength({ min: 6 })
+        .withMessage('Password must be at least 6 characters long.'),
+    
+    // This part remains the same for all validators
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        next();
+    },
+];
+
 export const validatePost = [
   // Title must not be empty and is sanitized
   body("title")
