@@ -46,16 +46,16 @@ export const getPostById = async (id) => {
 };
 
 // ✅ Create post with authorId + FK error handling
-export const createPost = async (postData) => {
-  const { title, content, authorId } = postData;
+export const createPost = async (postData, authorId) => {
+  const { title, content } = postData;
 
   try {
     const [result] = await pool.query(
-      "INSERT INTO posts (title, content, authorId) VALUES (?, ?, ?)",
+      'INSERT INTO posts (title, content, authorId) VALUES (?, ?, ?)',
       [title, content, authorId]
     );
-
-    return await getPostById(result.insertId);
+    const newPost = await getPostById(result.insertId);
+    return newPost;
   } catch (err) {
     if (err.code === "ER_NO_REFERENCED_ROW_2") {
       throw new ApiError(400, "Invalid author ID. User does not exist.");

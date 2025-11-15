@@ -20,7 +20,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/photos', photoRoutes); 
 app.use('/api/auth', authRoutes);
 app.use('/users', userRoutes);
-app.use('/posts', postRoutes);
+app.use('/api/posts', postRoutes);
 app.use('/comments', commentRoutes);
 app.use(errorHandler);
 app.listen(port, () => {

@@ -10,3 +10,10 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 // We will add a loginUser function here in the next lab
+// src/controllers/auth.controller.js
+// ... (imports and registerUser function)
+
+export const loginUser = asyncHandler(async (req, res) => {
+    const token = await userService.loginUser(req.body);
+    res.status(200).json(new ApiResponse(200, { token }, "User logged in successfully"));
+});
