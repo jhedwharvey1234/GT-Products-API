@@ -11,9 +11,9 @@ router.get("/", postController.getAllPosts);
 router.get("/:id", postController.getPostById);
 // Create post must be authenticated
 router.post('/', authMiddleware, validatePost, postController.createPost);
-router.put("/:id", validatePost, postController.updatePost);
+router.put('/:id', authMiddleware, validatePost, postController.updatePost);
 router.patch("/:id", postController.partiallyUpdatePost); // todo: add patch validator later
-router.delete("/:id", postController.deletePost);
+router.delete('/:id', authMiddleware, postController.deletePost);
 
 router.get("/:postId/comments", commentController.getCommentsByPostId);
 

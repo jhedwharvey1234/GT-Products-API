@@ -65,26 +65,24 @@ export const createPost = async (postData, authorId) => {
 };
 
 // ✅ Full update (PUT)
-export const updatePost = async (id, postData) => {
-  const { title, content, authorId } = postData;
+export const updatePost = async (id, postData, userId) => { // Add userId as an argument
+    const { title, content } = postData;
 
-  try {
-    const [result] = await pool.query(
-      "UPDATE posts SET title = ?, content = ?, authorId = ? WHERE id = ?",
-      [title, content, authorId, id]
+    // First, get the post to check for ownership
+    const post = await getPostById(id); // This will throw a 404 if not found
+
+    // AUTHORIZATION CHECK
+    if (post.authorId !== userId) {
+        throw new ApiError(403, "Forbidden: You do not have permission to edit this post.");
+    }
+
+    // If the check passes, proceed with the update
+    await pool.query(
+        'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+        [title, content, id]
     );
-
-    if (result.affectedRows === 0) {
-      throw new ApiError(404, "Post not found");
-    }
-
-    return await getPostById(id);
-  } catch (err) {
-    if (err.code === "ER_NO_REFERENCED_ROW_2") {
-      throw new ApiError(400, "Invalid author ID. User does not exist.");
-    }
-    throw err;
-  }
+    const updatedPost = await getPostById(id);
+    return updatedPost;
 };
 
 // ✅ Partial update (PATCH)
@@ -117,10 +115,16 @@ export const partiallyUpdatePost = async (id, updates) => {
 };
 
 // ✅ Delete post
-export const deletePost = async (id) => {
-  const [result] = await pool.query("DELETE FROM posts WHERE id = ?", [id]);
-  if (result.affectedRows === 0) {
-    throw new ApiError(404, "Post not found");
-  }
-  return true;
+export const deletePost = async (id, userId) => { // Add userId as an argument
+    // First, get the post to check for ownership
+    const post = await getPostById(id); // This will throw a 404 if not found
+
+    // AUTHORIZATION CHECK
+    if (post.authorId !== userId) {
+        throw new ApiError(403, "Forbidden: You do not have permission to delete this post.");
+    }
+    
+    // If the check passes, proceed with the deletion
+    const [result] = await pool.query('DELETE FROM posts WHERE id = ?', [id]);
+    return result.affectedRows;
 };
