@@ -11,7 +11,7 @@ const handleValidation = (req, res, next) => {
 
 export const validateComment = [
   body('content').trim().notEmpty().withMessage('Content is required.'),
-  body('authorId').isInt({ min: 1 }).withMessage('A valid author ID is required.'),
+  body('postId').isInt({ min: 1 }).withMessage('A valid post ID is required.'),
   handleValidation,
 ];
 
